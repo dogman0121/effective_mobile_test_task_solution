@@ -18,6 +18,8 @@ RUN poetry install --no-root
 
 COPY . .
 
-EXPOSE 8000
+RUN chmod +x boot.sh
 
-ENTRYPOINT ["poetry", "run", "flask", "run", '-h 0.0.0.0', "-p 5000"]
+EXPOSE 5000
+
+ENTRYPOINT ["./boot.sh"]

@@ -16,6 +16,6 @@ services:
       dockerfile: Dockerfile
     environment:
       SECRET_KEY: "12345678"
-      DATABASE_URI: "postgresql+psycopg2://tester:rdPWwp_2E89QpHOD@postgresql:5432/test"
+      DATABASE_URI: "postgresql+psycopg2://postgres:12345678@postgresql:5432/test"
     ports:
       - "5000:5000"
