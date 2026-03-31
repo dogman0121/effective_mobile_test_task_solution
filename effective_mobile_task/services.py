@@ -24,11 +24,11 @@ class JWTService:
     def __init__(self, secret_key):
         self.secret_key = secret_key
 
-    def generate_jwt(self, data: dict):
-        return jwt.encode(data, key=self.secret_key)
+    def encode_jwt(self, data: dict):
+        return jwt.encode(data, key=self.secret_key.encode(), algorithm="HS256")
 
-    def check_jwt(self, token):
-        return jwt.decode(token, key=self.secret_key)
+    def decode_jwt(self, token):
+        return jwt.decode(token, key=self.secret_key.encode(), algorithms=["HS256"])
 
 class UserService:
     
@@ -120,14 +120,14 @@ class AuthService:
         with self.db_transaction:
             self.user_repo.create_user(user)
 
-        return self.jwt_service.generate_jwt({"user_id": user.id})
+        return self.jwt_service.encode_jwt({"user_id": user.id})
 
     def login(self, data: LoginDTO):
         user = self.user_repo.get_user_by_email(data.email)
         print(user.password, data.password)
 
         if self.hash_service.check_password_hash(data.password, user.password):
-            return self.jwt_service.generate_jwt({"user_id": user.id})
+            return self.jwt_service.encode_jwt({"user_id": user.id})
         
         raise NotAuthorizedException
 

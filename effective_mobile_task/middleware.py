@@ -3,15 +3,15 @@ from flask import request
 from flask_jwt_extended import (
     get_jwt_identity,
 )
-from flask_jwt_extended import (verify_jwt_in_request, get_jwt_identity)
 from flask_jwt_extended.exceptions import JWTExtendedException
 from jwt.exceptions import ExpiredSignatureError
 
 from dependency_injector.wiring import inject, Provide
 
 from .containers import AppContainer
-from .services import UserService
+from .services import UserService, JWTService
 from .exceptions import ApiException, NotFoundException
+
 
 def login_required(optional=False, refresh=False):
     def decorator(func):
@@ -20,12 +20,20 @@ def login_required(optional=False, refresh=False):
         def wrapper(
             *args, 
             user_service: UserService = Provide[AppContainer.user_service],
+            jwt_service: JWTService = Provide[AppContainer.jwt_service],
             **kwargs
         ):
             try:
-                verify_jwt_in_request(optional=optional, refresh=refresh, locations=["headers"])
+                authorization_header = request.headers.get("Authorization")
 
-                user_id = get_jwt_identity()
+                if authorization_header is None or not authorization_header.startswith("Bearer"):
+                    if optional:
+                        return func(None, *args, **kwargs)
+                    raise ApiException(status_code=401, error="unauthorized")
+                
+                token = authorization_header.replace("Bearer ", "").strip()
+
+                user_id = jwt_service.decode_jwt(token)["user_id"]
                 
                 if user_id is None:
                     if optional:
