@@ -185,6 +185,7 @@ def delete_user_route(
 
 @bp.route("/permissions/<int:permission_id>", methods=["GET"])
 @login_required()
+@inject
 def get_permission_route(
     current_user,
     permission_id,
@@ -203,6 +204,7 @@ def get_permission_route(
 
 @bp.route("/permissions", methods=["POST"])
 @login_required()
+@inject
 def create_permission_route(
     current_user,
     permission_service: PermissionService = Provide[AppContainer.permission_service]
@@ -227,6 +229,7 @@ def create_permission_route(
 
 @bp.route("/permissions/<int:permission_id>", methods=["PUT"])
 @login_required()
+@inject
 def update_permission_route(
     current_user,
     permission_id,
@@ -253,6 +256,7 @@ def update_permission_route(
         raise ApiException(status_code=403, error="forbidden")
 
 @bp.route("/permissions/<int:permission_id>", methods=["DELETE"])
+@inject
 def delete_permission_route(
     current_user,
     permission_id,

@@ -31,4 +31,4 @@ class RolePermission(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(unique=True)
-    role_id: Mapped[int] = mapped_column()
+    role: Mapped[int] = mapped_column()

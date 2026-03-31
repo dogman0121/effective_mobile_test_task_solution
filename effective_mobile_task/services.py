@@ -140,7 +140,7 @@ class PermissionService:
         self.db_transaction=db_transaction
 
     def create_permission(self, user, data):
-        if not user.role > ADMIN_ROLE:
+        if not user.role >= ADMIN_ROLE:
             raise PermissionDeniedException
 
         permission = RolePermission(
@@ -154,7 +154,7 @@ class PermissionService:
         return permission
 
     def update_permission(self, user, permission, data):
-        if not user.role > ADMIN_ROLE:
+        if not user.role >= ADMIN_ROLE:
             raise PermissionDeniedException
         
         permission.name = data.name
@@ -166,7 +166,7 @@ class PermissionService:
         return permission
 
     def delete_permission(self, user, permission):
-        if not user.role > ADMIN_ROLE:
+        if not user.role >= ADMIN_ROLE:
             raise PermissionDeniedException
         
         self.permission_repo.delete_permission(permission)
